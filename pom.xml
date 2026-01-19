@@ -104,6 +104,31 @@
       </plugin>
 
       <!-- SpotBugs -->
+<plugin>
+  <groupId>com.github.spotbugs</groupId>
+  <artifactId>spotbugs-maven-plugin</artifactId>
+  <version>4.8.6.4</version>
+
+  <configuration>
+    <effort>Max</effort>
+    <threshold>Low</threshold>
+    <failOnError>false</failOnError>
+    <xmlOutput>true</xmlOutput>
+    <htmlOutput>true</htmlOutput>
+  </configuration>
+
+  <executions>
+    <execution>
+      <phase>verify</phase>
+      <goals>
+        <goal>spotbugs</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+
+
+      <!-- SpotBugs -->
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
