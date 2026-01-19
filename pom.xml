@@ -14,9 +14,10 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <junit.jupiter.version>5.10.0</junit.jupiter.version>
   </properties>
+
   <dependencies>
     <!-- JUnit 5 -->
     <dependency>
@@ -30,14 +31,15 @@
   <build>
     <plugins>
 
-      <!-- Compilador -->
+      <!-- Compilador (compatible con JDK 8: NO usar <release>) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
         <configuration>
-          <release>8</release>
-          <encoding>UTF-8</encoding>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+          <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
       </plugin>
 
@@ -70,7 +72,6 @@
         <version>3.3.0</version>
         <configuration>
           <configLocation>google_checks.xml</configLocation>
-          <encoding>UTF-8</encoding>
           <consoleOutput>true</consoleOutput>
           <failOnViolation>false</failOnViolation>
         </configuration>
@@ -102,6 +103,31 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- SpotBugs -->
+<plugin>
+  <groupId>com.github.spotbugs</groupId>
+  <artifactId>spotbugs-maven-plugin</artifactId>
+  <version>4.8.6.4</version>
+
+  <configuration>
+    <effort>Max</effort>
+    <threshold>Low</threshold>
+    <failOnError>false</failOnError>
+    <xmlOutput>true</xmlOutput>
+    <htmlOutput>true</htmlOutput>
+  </configuration>
+
+  <executions>
+    <execution>
+      <phase>verify</phase>
+      <goals>
+        <goal>spotbugs</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+
 
     </plugins>
   </build>
