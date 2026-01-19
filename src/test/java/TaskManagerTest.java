@@ -1,8 +1,8 @@
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,55 +17,33 @@ public class TaskManagerTest {
     }
 
     @Test
-    @DisplayName("addTask agrega una tarea e imprime mensaje de confirmación")
+    @DisplayName("addTask agrega una tarea (retorna true)")
     void testAddTask() {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
-        taskManager.addTask("Complete project");
-
-        System.setOut(originalOut);
-
-        String output = outContent.toString();
-        assertTrue(output.contains("Task added."));
+        boolean result = taskManager.addTask("Complete project");
+        assertTrue(result);
     }
 
     @Test
-    @DisplayName("listTasks imprime las tareas en el formato correcto")
+    @DisplayName("listTasks devuelve las tareas en el formato correcto")
     void testListTasks() {
         taskManager.addTask("Task A");
         taskManager.addTask("Task B");
 
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
+        List<String> output = taskManager.listTasks();
 
-        taskManager.listTasks();
-
-        System.setOut(originalOut);
-
-        String output = outContent.toString();
         assertTrue(output.contains("Task 1: Task A"));
         assertTrue(output.contains("Task 2: Task B"));
     }
 
     @Test
-    @DisplayName("removeTask elimina una tarea e imprime mensaje de confirmación")
+    @DisplayName("removeTask elimina una tarea (retorna true)")
     void testRemoveTask() {
         taskManager.addTask("Task A");
         taskManager.addTask("Task B");
 
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
+        boolean removed = taskManager.removeTask(1);
 
-        taskManager.removeTask(1);
-
-        System.setOut(originalOut);
-
-        String output = outContent.toString();
-        assertTrue(output.contains("Task removed."));
+        assertTrue(removed);
     }
 
     @Test
@@ -74,24 +52,21 @@ public class TaskManagerTest {
         taskManager.addTask("Task A");
         taskManager.addTask("Task B");
 
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
+        boolean removed = taskManager.removeTask(1);
+        assertTrue(removed);
 
-        taskManager.removeTask(1);
-        taskManager.listTasks();
-
-        System.setOut(originalOut);
-
-        String output = outContent.toString();
+        List<String> output = taskManager.listTasks();
         assertTrue(output.contains("Task 1: Task B"));
+        assertFalse(output.contains("Task 2: Task B"));
     }
 
     @Test
-    @DisplayName("removeTask con ID inválido lanza excepción (problema predefinido)")
+    @DisplayName("removeTask con ID inválido NO lanza excepción y retorna false")
     void testRemoveTaskIdInvalido() {
         taskManager.addTask("Only Task");
 
-        assertThrows(IndexOutOfBoundsException.class, () -> taskManager.removeTask(2));
+        boolean removed = taskManager.removeTask(2);
+
+        assertFalse(removed);
     }
 }
