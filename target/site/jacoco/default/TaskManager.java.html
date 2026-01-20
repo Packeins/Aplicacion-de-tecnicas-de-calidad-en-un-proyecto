@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TaskManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">task-manager</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">TaskManager.java</span></div><h1>TaskManager.java</h1><pre class="source lang-java linenums">import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Manages a list of tasks and provides basic CRUD operations.
+ */
+<span class="fc" id="L8">public class TaskManager {</span>
+
+<span class="fc" id="L10">  private final List&lt;String&gt; tasks = new ArrayList&lt;&gt;();</span>
+
+  /**
+   * Adds a new task to the manager.
+   *
+   * @param taskDescription description of the task
+   * @return true if the task was added; false otherwise
+   */
+  public boolean addTask(String taskDescription) {
+<span class="fc bfc" id="L19" title="All 2 branches covered.">    if (!isValidTaskDescription(taskDescription)) {</span>
+<span class="fc" id="L20">      return false;</span>
+    }
+
+<span class="fc" id="L23">    String normalized = normalize(taskDescription);</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">    if (isDuplicate(normalized)) {</span>
+<span class="fc" id="L25">      return false;</span>
+    }
+
+<span class="fc" id="L28">    tasks.add(normalized);</span>
+<span class="fc" id="L29">    return true;</span>
+  }
+
+  /**
+   * Lists tasks in the same 1-based format used in the original code.
+   *
+   * @return lines like &quot;Task 1: ...&quot; preserving insertion order
+   */
+  public List&lt;String&gt; listTasks() {
+<span class="fc" id="L38">    List&lt;String&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">    for (int i = 0; i &lt; tasks.size(); i++) {</span>
+<span class="fc" id="L40">      result.add(formatTaskLine(i, tasks.get(i)));</span>
+    }
+<span class="fc" id="L42">    return result;</span>
+  }
+
+  /**
+   * Removes a task by a 1-based id (as shown in listTasks).
+   *
+   * @param id 1-based task id
+   * @return true if removed; false if id is invalid
+   */
+  public boolean removeTask(int id) {
+<span class="fc bfc" id="L52" title="All 2 branches covered.">    if (!isValidTaskId(id)) {</span>
+<span class="fc" id="L53">      return false;</span>
+    }
+<span class="fc" id="L55">    tasks.remove(id - 1);</span>
+<span class="fc" id="L56">    return true;</span>
+  }
+
+  /**
+   * Updates an existing task by a 1-based id.
+   * Rules:
+   * - id must be valid (1..size)
+   * - newDescription must not be null/blank
+   * - newDescription must not duplicate another existing task
+   *
+   * @param id 1-based task id
+   * @param newDescription new description
+   * @return true if updated; false otherwise
+   */
+  public boolean updateTask(int id, String newDescription) {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">    if (!isValidTaskId(id)) {</span>
+<span class="fc" id="L72">      return false;</span>
+    }
+<span class="fc bfc" id="L74" title="All 2 branches covered.">    if (!isValidTaskDescription(newDescription)) {</span>
+<span class="fc" id="L75">      return false;</span>
+    }
+
+<span class="fc" id="L78">    String normalized = normalize(newDescription);</span>
+<span class="fc" id="L79">    int index = id - 1;</span>
+
+<span class="fc bfc" id="L81" title="All 2 branches covered.">    if (wouldBecomeDuplicate(index, normalized)) {</span>
+<span class="fc" id="L82">      return false;</span>
+    }
+
+<span class="fc" id="L85">    tasks.set(index, normalized);</span>
+<span class="fc" id="L86">    return true;</span>
+  }
+
+  /**
+   * Returns a read-only snapshot of the current tasks.
+   *
+   * @return unmodifiable list of tasks
+   */
+  public List&lt;String&gt; getTasksSnapshot() {
+<span class="fc" id="L95">    return Collections.unmodifiableList(new ArrayList&lt;&gt;(tasks));</span>
+  }
+
+  // ----------------- Private helpers (small, single-purpose) -----------------
+
+  private boolean isValidTaskDescription(String taskDescription) {
+<span class="fc bfc" id="L101" title="All 4 branches covered.">    return taskDescription != null &amp;&amp; !taskDescription.trim().isEmpty();</span>
+  }
+
+  private String normalize(String taskDescription) {
+<span class="fc" id="L105">    return taskDescription.trim();</span>
+  }
+
+  private boolean isDuplicate(String normalizedTaskDescription) {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">    for (String existing : tasks) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">      if (existing.equals(normalizedTaskDescription)) {</span>
+<span class="fc" id="L111">        return true;</span>
+      }
+<span class="fc" id="L113">    }</span>
+<span class="fc" id="L114">    return false;</span>
+  }
+
+  private boolean isValidTaskId(int id) {
+<span class="fc bfc" id="L118" title="All 4 branches covered.">    return id &gt;= 1 &amp;&amp; id &lt;= tasks.size();</span>
+  }
+
+  private boolean wouldBecomeDuplicate(int targetIndex, String normalizedNewDescription) {
+<span class="fc bfc" id="L122" title="All 2 branches covered.">    for (int i = 0; i &lt; tasks.size(); i++) {</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">      if (i == targetIndex) {</span>
+<span class="fc" id="L124">        continue;</span>
+      }
+<span class="fc bfc" id="L126" title="All 2 branches covered.">      if (tasks.get(i).equals(normalizedNewDescription)) {</span>
+<span class="fc" id="L127">        return true;</span>
+      }
+    }
+<span class="fc" id="L130">    return false;</span>
+  }
+
+  private String formatTaskLine(int indexZeroBased, String taskDescription) {
+<span class="fc" id="L134">    return &quot;Task &quot; + (indexZeroBased + 1) + &quot;: &quot; + taskDescription;</span>
+  }
+
+  // ----------------- Console/UI only (Refactored for Testability) -----------------
+
+  /**
+   * Helper method to print the result of an operation.
+   * This method allows testing both branches (true/false) separately
+   * to achieve 100% Jacoco branch coverage.
+   *
+   * @param success The result of the operation
+   * @param successMsg Message to print if success is true
+   * @param failMsg Message to print if success is false
+   */
+  public void printOperationResult(boolean success, String successMsg, String failMsg) {
+<span class="fc bfc" id="L149" title="All 2 branches covered.">    System.out.println(success ? successMsg : failMsg);</span>
+<span class="fc" id="L150">  }</span>
+
+  /**
+   * Main execution method.
+   *
+   * @param args command line arguments
+   */
+  public static void main(String[] args) {
+<span class="fc" id="L158">    TaskManager taskManager = new TaskManager();</span>
+
+    // 1. Add Task
+<span class="fc" id="L161">    boolean added = taskManager.addTask(&quot;Complete project&quot;);</span>
+<span class="fc" id="L162">    taskManager.printOperationResult(added, &quot;Task added.&quot;, &quot;Task NOT added.&quot;);</span>
+
+    // 2. List Tasks
+<span class="fc bfc" id="L165" title="All 2 branches covered.">    for (String line : taskManager.listTasks()) {</span>
+<span class="fc" id="L166">      System.out.println(line);</span>
+<span class="fc" id="L167">    }</span>
+
+    // 3. Update Task
+<span class="fc" id="L170">    boolean updated = taskManager.updateTask(1, &quot;Complete project (updated)&quot;);</span>
+<span class="fc" id="L171">    taskManager.printOperationResult(updated, &quot;Task updated.&quot;, &quot;Task NOT updated.&quot;);</span>
+
+    // 4. Remove Task
+<span class="fc" id="L174">    boolean removed = taskManager.removeTask(1);</span>
+<span class="fc" id="L175">    taskManager.printOperationResult(removed, &quot;Task removed.&quot;, &quot;Task NOT removed.&quot;);</span>
+<span class="fc" id="L176">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

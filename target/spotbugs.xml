@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<BugCollection version='4.9.8' threshold='low' effort='max'><Error></Error><Project><SrcDir>/workspaces/Aplicaci-n-de-t-cnicas-de-calidad-en-un-proyecto/src/main/java</SrcDir><SrcDir>/workspaces/Aplicaci-n-de-t-cnicas-de-calidad-en-un-proyecto/target/generated-sources/annotations</SrcDir><SrcDir>/workspaces/Aplicaci-n-de-t-cnicas-de-calidad-en-un-proyecto/src/test/java</SrcDir><SrcDir>/workspaces/Aplicaci-n-de-t-cnicas-de-calidad-en-un-proyecto/target/generated-test-sources/test-annotations</SrcDir></Project></BugCollection>
